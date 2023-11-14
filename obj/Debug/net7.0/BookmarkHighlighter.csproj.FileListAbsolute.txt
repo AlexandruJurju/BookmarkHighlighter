@@ -1,0 +1,17 @@
+X:\Programming Projects\C#\BookmarkHighlighter\bin\Debug\net7.0\BookmarkHighlighter.exe
+X:\Programming Projects\C#\BookmarkHighlighter\bin\Debug\net7.0\BookmarkHighlighter.deps.json
+X:\Programming Projects\C#\BookmarkHighlighter\bin\Debug\net7.0\BookmarkHighlighter.runtimeconfig.json
+X:\Programming Projects\C#\BookmarkHighlighter\bin\Debug\net7.0\BookmarkHighlighter.dll
+X:\Programming Projects\C#\BookmarkHighlighter\bin\Debug\net7.0\BookmarkHighlighter.pdb
+X:\Programming Projects\C#\BookmarkHighlighter\obj\Debug\net7.0\BookmarkHighlighter.csproj.AssemblyReference.cache
+X:\Programming Projects\C#\BookmarkHighlighter\obj\Debug\net7.0\BookmarkHighlighter.GeneratedMSBuildEditorConfig.editorconfig
+X:\Programming Projects\C#\BookmarkHighlighter\obj\Debug\net7.0\BookmarkHighlighter.AssemblyInfoInputs.cache
+X:\Programming Projects\C#\BookmarkHighlighter\obj\Debug\net7.0\BookmarkHighlighter.AssemblyInfo.cs
+X:\Programming Projects\C#\BookmarkHighlighter\obj\Debug\net7.0\BookmarkHighlighter.csproj.CoreCompileInputs.cache
+X:\Programming Projects\C#\BookmarkHighlighter\obj\Debug\net7.0\BookmarkHighlighter.dll
+X:\Programming Projects\C#\BookmarkHighlighter\obj\Debug\net7.0\refint\BookmarkHighlighter.dll
+X:\Programming Projects\C#\BookmarkHighlighter\obj\Debug\net7.0\BookmarkHighlighter.pdb
+X:\Programming Projects\C#\BookmarkHighlighter\obj\Debug\net7.0\BookmarkHighlighter.genruntimeconfig.cache
+X:\Programming Projects\C#\BookmarkHighlighter\obj\Debug\net7.0\ref\BookmarkHighlighter.dll
+X:\Programming Projects\C#\BookmarkHighlighter\bin\Debug\net7.0\Newtonsoft.Json.dll
+X:\Programming Projects\C#\BookmarkHighlighter\obj\Debug\net7.0\BookmarkHighlighter.csproj.CopyComplete
