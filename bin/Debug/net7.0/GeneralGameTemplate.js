@@ -42,7 +42,7 @@ const intervalId = window.setInterval(function () {
     // when using the see all games increment should be 7, else 9
     if (currentUrl.startsWith("https://steamdb.info")) {
         let increment;
-        if (currentUrl === "https://steamdb.info/stats/gameratings/?all") {
+        if (currentUrl === "https://steamdb.info/stats/gameratings/?all" || currentUrl.startsWith("https://steamdb.info/charts/") ) {
             increment = 7;
         } else {
             increment = 9;

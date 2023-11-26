@@ -11,4 +11,20 @@
       <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Content Include="bin\Debug\net7.0\BookmarkHighlighter.deps.json" />
+      <Content Include="bin\Debug\net7.0\BookmarkHighlighter.dll" />
+      <Content Include="bin\Debug\net7.0\BookmarkHighlighter.exe" />
+      <Content Include="bin\Debug\net7.0\BookmarkHighlighter.pdb" />
+      <Content Include="bin\Debug\net7.0\BookmarkHighlighter.runtimeconfig.json" />
+      <Content Include="bin\Debug\net7.0\GeneralGameTemplate.js" />
+      <Content Include="bin\Debug\net7.0\Highlighter Extension\GameHighlighter.js" />
+      <Content Include="bin\Debug\net7.0\Highlighter Extension\images\icons8-steam-128.png" />
+      <Content Include="bin\Debug\net7.0\Highlighter Extension\images\icons8-steam-16.png" />
+      <Content Include="bin\Debug\net7.0\Highlighter Extension\images\icons8-steam-32.png" />
+      <Content Include="bin\Debug\net7.0\Highlighter Extension\images\icons8-steam-48.png" />
+      <Content Include="bin\Debug\net7.0\Highlighter Extension\manifest.json" />
+      <Content Include="bin\Debug\net7.0\Newtonsoft.Json.dll" />
+    </ItemGroup>
+
 </Project>

@@ -60,11 +60,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "X:\\Programming Projects\\C#\\BookmarkHighlighter\\BookmarkHighlighter.csproj",
+      "projectUniqueName": "X:\\Private Repos\\BookmarkHighlighter\\BookmarkHighlighter.csproj",
       "projectName": "BookmarkHighlighter",
-      "projectPath": "X:\\Programming Projects\\C#\\BookmarkHighlighter\\BookmarkHighlighter.csproj",
+      "projectPath": "X:\\Private Repos\\BookmarkHighlighter\\BookmarkHighlighter.csproj",
       "packagesPath": "C:\\Users\\realb\\.nuget\\packages\\",
-      "outputPath": "X:\\Programming Projects\\C#\\BookmarkHighlighter\\obj\\",
+      "outputPath": "X:\\Private Repos\\BookmarkHighlighter\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\realb\\AppData\\Roaming\\NuGet\\NuGet.Config",

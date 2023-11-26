@@ -15,7 +15,8 @@
         "https://store.steampowered.com/search/*",
         "https://steam250.com/*",
 		"https://steamdb.info/stats/gameratings/*",
-        "https://steamdb.info/instantsearch/*"
+        "https://steamdb.info/instantsearch/*",
+		"https://steamdb.info/charts/*"
       ],
       "js": ["GameHighlighter.js"]
     }
