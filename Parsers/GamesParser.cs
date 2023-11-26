@@ -4,12 +4,11 @@ using Newtonsoft.Json.Linq;
 
 namespace BookmarkHighlighter.Parsers;
 
-public class GameParser
+internal class GamesParser : ParserBase
 {
-    // get a dictionary with <K: String game link category, Value: List<String> with all the links of all the games in that folder>
-    public Dictionary<string, List<string>> GetLinks(string bookmarksFilePath)
+    public override Dictionary<string, List<string>> GetLinks(string path)
     {
-        string input = File.ReadAllText(bookmarksFilePath);
+        string input = File.ReadAllText(path);
         StringReader reader = new StringReader(input);
         JsonReader jsonReader = new JsonTextReader(reader);
 
@@ -18,8 +17,10 @@ public class GameParser
         // Chrome bookmark structure is this way root -> bookmark_bar -> children; 
         // children are all the existing folders
         var allFolders = o["roots"]["bookmark_bar"]["children"];
+
         // find the Games folder
         var gameFolder = allFolders.First(x => x["name"].ToString() == "Games");
+
         // get all the folders inside the games folder
         var gameSubFolders = gameFolder["children"];
 
@@ -30,6 +31,8 @@ public class GameParser
             string folderName = folder["name"].ToString();
             string category;
             List<string> links = GetLinksFromFolder(folder);
+            links = (List<string>)links.Where(x => x.Contains("steampowered.com"));
+            links = ExtractGameNamesFromLinkList(links);
 
             switch (folderName)
             {
@@ -58,34 +61,6 @@ public class GameParser
     }
 
     // recursive function that finds all the links inside a folder
-    private List<string> GetLinksFromFolder(JToken folder)
-    {
-        List<string> links = new List<string>();
-
-        // for each element in that folder
-        foreach (var child in folder["children"])
-        {
-            // if the element is a link then add it to the list
-            if (child["type"]?.ToString() == "url")
-            {
-                string game_url = child["url"].ToString();
-                if (game_url.Contains("steampowered.com"))
-                {
-                    string game_name = ExtractGameNameFromURL(game_url);
-                    links.Add(game_name);
-                }
-            }
-            // if the element is a folder then recursively call the function to find all the links inside that folder
-            else if (child["children"] != null)
-            {
-                // Recursively get links from inner folders
-                links.AddRange(GetLinksFromFolder(child));
-            }
-        }
-
-        return links;
-    }
-
     private string ExtractGameNameFromURL(string url)
     {
         // Define a regular expression pattern to match the name part
@@ -107,5 +82,16 @@ public class GameParser
         {
             throw new Exception("CANT FIND NAME");
         }
+    }
+
+    private List<string> ExtractGameNamesFromLinkList(List<string> urls)
+    {
+        List<string> gameNames = new List<string>();
+
+        foreach (string url in urls)
+        {
+            gameNames.Add(ExtractGameNameFromURL(url));
+        }
+        return gameNames;
     }
 }
