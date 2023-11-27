@@ -31,7 +31,7 @@ internal class GamesParser : ParserBase
             string folderName = folder["name"].ToString();
             string category;
             List<string> links = GetLinksFromFolder(folder);
-            links = (List<string>)links.Where(x => x.Contains("steampowered.com"));
+            links = links.Where(x => x.Contains("steampowered.com")).ToList();
             links = ExtractGameNamesFromLinkList(links);
 
             switch (folderName)
