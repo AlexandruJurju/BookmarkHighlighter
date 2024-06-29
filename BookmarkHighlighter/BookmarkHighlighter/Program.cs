@@ -1,4 +1,5 @@
 ﻿using BookmarkHighlighter.BookmarkParsers;
+using BookmarkHighlighter.JsonParser;
 using BookmarkHighlighter.Parser;
 
 var bookmarksFilePath = @"X:\Misc Programs\Browser\Vivaldi\User Data\Default\Bookmarks";

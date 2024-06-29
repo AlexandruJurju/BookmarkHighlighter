@@ -4,7 +4,12 @@ namespace BookmarkHighlighter.BookmarkParsers;
 
 public abstract class BookmarkParserBase
 {
-    public abstract void Parse(BookmarkFolder rootFolder);
+    public void ParseAndWriteToJson(BookmarkFolder rootFolder)
+    {
+        var result = Parse(rootFolder);
+    }
+
+    public abstract Dictionary<string, List<string>> Parse(BookmarkFolder rootFolder);
 
     protected BookmarkFolder? FindFolder(BookmarkFolder folder, string name)
     {
