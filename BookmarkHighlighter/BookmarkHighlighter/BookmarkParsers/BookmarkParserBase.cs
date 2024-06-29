@@ -4,6 +4,8 @@ namespace BookmarkHighlighter.BookmarkParsers;
 
 public abstract class BookmarkParserBase
 {
+    public abstract void Parse(BookmarkFolder rootFolder);
+
     protected BookmarkFolder? FindFolder(BookmarkFolder folder, string name)
     {
         if (folder.Name == name)
