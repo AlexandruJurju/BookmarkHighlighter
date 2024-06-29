@@ -7,7 +7,7 @@ public class GamesParser : BookmarkParserBase
 {
     private const string SteamAppPattern = @"/app/\d+/(.*?)/";
 
-    public override void Parse(BookmarkFolder rootFolder)
+    public override Dictionary<string, List<string>> Parse(BookmarkFolder rootFolder)
     {
         var gamesFolder = FindFolder(rootFolder, "Games");
         if (gamesFolder == null)
@@ -15,6 +15,13 @@ public class GamesParser : BookmarkParserBase
             throw new InvalidOperationException("Games folder not found");
         }
 
+        var flattenedStructure = gamesFolder.FlattenStructure();
+        var result = ProcessFlattenedStructure(flattenedStructure);
+        return result;
+    }
+
+    private Dictionary<string, List<string>> ProcessFlattenedStructure(Dictionary<string, List<string>> flattenedStructure)
+    {
         var categories = new Dictionary<string, List<string>>
         {
             ["waiting"] = new(),
@@ -22,36 +29,18 @@ public class GamesParser : BookmarkParserBase
             ["normal"] = new()
         };
 
-        ProcessFolder(gamesFolder, categories);
-    }
-
-    private void ProcessFolder(BookmarkFolder folder, Dictionary<string, List<string>> categories)
-    {
-        foreach (var subfolder in folder.Subfolders)
+        foreach (var (folderName, links) in flattenedStructure)
         {
-            var category = GetCategory(subfolder.Name);
-            if (subfolder.Subfolders.Any())
-            {
-                ProcessFolder(subfolder, categories);
-            }
-            else
-            {
-                var games = GetGamesFromFolder(subfolder);
-                categories[category].AddRange(games);
-            }
+            var category = GetCategory(folderName);
+            var games = links
+                .Where(url => url.Contains("steampowered.com"))
+                .Select(ExtractGameName)
+                .ToList();
+
+            categories[category].AddRange(games);
         }
 
-        var currentCategory = GetCategory(folder.Name);
-        var gamesInCurrentFolder = GetGamesFromFolder(folder);
-        categories[currentCategory].AddRange(gamesInCurrentFolder);
-    }
-
-    private List<string> GetGamesFromFolder(BookmarkFolder folder)
-    {
-        return folder.Bookmarks
-            .Where(b => b.Url.Contains("steampowered.com"))
-            .Select(b => ExtractGameName(b.Url))
-            .ToList();
+        return categories;
     }
 
     private string GetCategory(string folderName)

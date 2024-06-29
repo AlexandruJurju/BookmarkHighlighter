@@ -1,7 +1,8 @@
 ﻿using System.Text.Json;
+using BookmarkHighlighter.Parser;
 using BookmarkHighlighter.Structure;
 
-namespace BookmarkHighlighter.Parser;
+namespace BookmarkHighlighter.JsonParser;
 
 public class JsonParser : IJsonParser
 {
