@@ -1,15 +1,24 @@
-﻿using BookmarkHighlighter.Structure;
+﻿using BookmarkHighlighter.JsWriters;
+using BookmarkHighlighter.Structure;
 
 namespace BookmarkHighlighter.BookmarkParsers;
 
 public abstract class BookmarkParserBase
 {
+    private readonly IJsWriter _jsWriter;
+
+    protected BookmarkParserBase(IJsWriter jsWriter)
+    {
+        _jsWriter = jsWriter;
+    }
+
     public void ParseAndWriteToJson(BookmarkFolder rootFolder)
     {
         var result = Parse(rootFolder);
+        _jsWriter.Write(result);
     }
 
-    public abstract Dictionary<string, List<string>> Parse(BookmarkFolder rootFolder);
+    protected abstract Dictionary<string, List<string>> Parse(BookmarkFolder rootFolder);
 
     protected BookmarkFolder? FindFolder(BookmarkFolder folder, string name)
     {

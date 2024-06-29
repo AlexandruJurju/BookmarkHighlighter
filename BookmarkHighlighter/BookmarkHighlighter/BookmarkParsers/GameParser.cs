@@ -1,4 +1,5 @@
 ﻿using System.Text.RegularExpressions;
+using BookmarkHighlighter.JsWriters;
 using BookmarkHighlighter.Structure;
 
 namespace BookmarkHighlighter.BookmarkParsers;
@@ -7,7 +8,7 @@ public class GamesParser : BookmarkParserBase
 {
     private const string SteamAppPattern = @"/app/\d+/(.*?)/";
 
-    public override Dictionary<string, List<string>> Parse(BookmarkFolder rootFolder)
+    protected override Dictionary<string, List<string>> Parse(BookmarkFolder rootFolder)
     {
         var gamesFolder = FindFolder(rootFolder, "Games");
         if (gamesFolder == null)
@@ -24,9 +25,9 @@ public class GamesParser : BookmarkParserBase
     {
         var categories = new Dictionary<string, List<string>>
         {
-            ["waiting"] = new(),
-            ["early"] = new(),
-            ["normal"] = new()
+            ["Waiting"] = new(),
+            ["Early"] = new(),
+            ["Normal"] = new()
         };
 
         foreach (var (folderName, links) in flattenedStructure)
@@ -47,9 +48,9 @@ public class GamesParser : BookmarkParserBase
     {
         return folderName.ToLower() switch
         {
-            "gwaiting" => "waiting",
-            "gearly" => "early",
-            _ => "normal"
+            "gwaiting" => "Waiting",
+            "gearly" => "Early",
+            _ => "Normal"
         };
     }
 
@@ -68,5 +69,9 @@ public class GamesParser : BookmarkParserBase
     private string NormalizeGameName(string gameName)
     {
         return string.Join(" ", gameName.Replace("_", " ").Split().Select(s => s.ToLower())).Trim();
+    }
+
+    public GamesParser(IJsWriter jsWriter) : base(jsWriter)
+    {
     }
 }
