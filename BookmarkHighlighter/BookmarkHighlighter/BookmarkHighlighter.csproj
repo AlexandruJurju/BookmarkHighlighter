@@ -8,7 +8,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Folder Include="Highlighters\"/>
+      <Folder Include="JsonWriters\" />
     </ItemGroup>
 
 </Project>

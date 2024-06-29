@@ -3,11 +3,11 @@ using BookmarkHighlighter.Structure;
 
 namespace BookmarkHighlighter.Parser;
 
-public class BookmarkParser : IBookmarkParser
+public class JsonParser : IJsonParser
 {
     private readonly string _bookmarkFilePath;
 
-    public BookmarkParser(string bookmarkFilePath)
+    public JsonParser(string bookmarkFilePath)
     {
         if (string.IsNullOrWhiteSpace(bookmarkFilePath))
         {

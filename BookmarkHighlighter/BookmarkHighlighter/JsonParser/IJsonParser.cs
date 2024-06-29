@@ -2,7 +2,7 @@
 
 namespace BookmarkHighlighter.Parser;
 
-public interface IBookmarkParser
+public interface IJsonParser
 {
     BookmarkFolder GetBookmarkStructure();
 }
