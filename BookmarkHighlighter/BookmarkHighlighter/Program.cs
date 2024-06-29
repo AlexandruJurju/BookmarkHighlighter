@@ -1,3 +1,5 @@
-﻿// See https://aka.ms/new-console-template for more information
+﻿using BookmarkHighlighter.Parser;
 
-Console.WriteLine("Hello, World!");
+var bookmarksFilePath = @"X:\Misc Programs\Browser\Vivaldi\User Data\Default\Bookmarks";
+IBookmarkParser parser = new BookmarkParser(bookmarksFilePath);
+var bookmarkStructure = parser.GetBookmarkStructure();
