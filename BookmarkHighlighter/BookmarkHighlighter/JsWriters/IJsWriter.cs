@@ -2,5 +2,5 @@
 
 public interface IJsWriter
 {
-    
+    void Write();
 }
