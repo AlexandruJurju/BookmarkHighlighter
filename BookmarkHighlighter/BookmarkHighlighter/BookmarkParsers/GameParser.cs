@@ -1,4 +1,5 @@
 ﻿using System.Text.RegularExpressions;
+using BookmarkHighlighter.Constants;
 using BookmarkHighlighter.Structure;
 
 namespace BookmarkHighlighter.BookmarkParsers;
@@ -10,15 +11,15 @@ public class GamesParser : BookmarkParserBase
     public override List<BookmarkFolder> Parse(BookmarkFolder rootFolder)
     {
         // Find the "Games" folder in the root folder
-        var gamesFolder = FindFolder(rootFolder, "Games");
+        var gamesFolder = FindFolder(rootFolder, FolderNames.Games);
         if (gamesFolder == null)
         {
             throw new InvalidOperationException("Games folder not found");
         }
 
         // Process the Games folder and its subfolders
-        return ProcessFolder(gamesFolder, 
-            bookmark => bookmark.Url.Contains("steampowered.com"), 
+        return ProcessFolder(gamesFolder,
+            bookmark => bookmark.Url.Contains("steampowered.com"),
             bookmark => new Bookmark(ExtractGameName(bookmark.Url), bookmark.Url));
     }
 

@@ -1,6 +1,8 @@
 ﻿using BookmarkHighlighter.BookmarkParsers;
+using BookmarkHighlighter.Constants;
 using BookmarkHighlighter.JsonParser;
-using BookmarkHighlighter.JsWriters;
+using BookmarkHighlighter.JsWriters.GamesWriter;
+using BookmarkHighlighter.JsWriters.NexusModsWriter;
 using BookmarkHighlighter.Parser;
 
 // todo: make it so js file is only written once, first find all the links then write
@@ -9,12 +11,20 @@ var bookmarksFilePath = @"X:\Misc Programs\Browser\Vivaldi\User Data\Default\Boo
 IJsonParser parser = new JsonParser(bookmarksFilePath);
 var bookmarkStructure = parser.GetBookmarkStructure();
 
-var templatePath = @"JsWriters\template.js";
 var outputPath = @"Highlighter Extension\GameHighlighter.js";
-IJsWriter writer = new JsWriter(templatePath, outputPath);
+
+if (File.Exists(outputPath))
+{
+    File.Delete(outputPath);
+}
 
 BookmarkParserBase gameParser = new GamesParser();
-var bookmarkFolders = gameParser.Parse(bookmarkStructure);
+BookmarkParserBase nexusModsParser = new NexusModsParser();
 
+var games = gameParser.Parse(bookmarkStructure);
+GamesJsWriter gamesJsWriter = new GamesJsWriter(outputPath);
+gamesJsWriter.Write(games);
 
-
+var nexusMods = nexusModsParser.Parse(bookmarkStructure);
+NexusModsJsWriter nexusModsJsWriter = new NexusModsJsWriter(outputPath);
+nexusModsJsWriter.Write(nexusMods);
