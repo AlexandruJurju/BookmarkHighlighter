@@ -1,5 +1,4 @@
 ﻿using System.Text.RegularExpressions;
-using BookmarkHighlighter.JsWriters;
 using BookmarkHighlighter.Structure;
 
 namespace BookmarkHighlighter.BookmarkParsers;
@@ -8,7 +7,7 @@ public class GamesParser : BookmarkParserBase
 {
     private const string SteamAppPattern = @"/app/\d+/(.*?)/";
 
-    public override Dictionary<string, List<string>> Parse(BookmarkFolder rootFolder)
+    public override List<BookmarkFolder> Parse(BookmarkFolder rootFolder)
     {
         // Find the "Games" folder in the root folder
         var gamesFolder = FindFolder(rootFolder, "Games");
@@ -17,32 +16,10 @@ public class GamesParser : BookmarkParserBase
             throw new InvalidOperationException("Games folder not found");
         }
 
-        // Flatten the folder structure
-        var flattenedStructure = gamesFolder.FlattenStructure();
-        // Process the flattened structure and return the result
-        return ProcessFlattenedStructure(flattenedStructure);
-    }
-
-    private Dictionary<string, List<string>> ProcessFlattenedStructure(Dictionary<string, List<string>> flattenedStructure)
-    {
-        var result = new Dictionary<string, List<string>>();
-
-        foreach (var (folderName, links) in flattenedStructure)
-        {
-            // Filter Steam URLs and extract game names
-            var games = links
-                .Where(url => url.Contains("steampowered.com"))
-                .Select(ExtractGameName)
-                .ToList();
-
-            // Only add non-empty folders to the result
-            if (games.Count > 0)
-            {
-                result[folderName] = games;
-            }
-        }
-
-        return result;
+        // Process the Games folder and its subfolders
+        return ProcessFolder(gamesFolder, 
+            bookmark => bookmark.Url.Contains("steampowered.com"), 
+            bookmark => new Bookmark(ExtractGameName(bookmark.Url), bookmark.Url));
     }
 
     private string ExtractGameName(string url)
