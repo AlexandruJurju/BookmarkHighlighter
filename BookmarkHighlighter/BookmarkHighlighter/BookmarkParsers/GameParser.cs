@@ -8,54 +8,46 @@ public class GamesParser : BookmarkParserBase
 {
     private const string SteamAppPattern = @"/app/\d+/(.*?)/";
 
-    protected override Dictionary<string, List<string>> Parse(BookmarkFolder rootFolder)
+    public override Dictionary<string, List<string>> Parse(BookmarkFolder rootFolder)
     {
+        // Find the "Games" folder in the root folder
         var gamesFolder = FindFolder(rootFolder, "Games");
         if (gamesFolder == null)
         {
             throw new InvalidOperationException("Games folder not found");
         }
 
+        // Flatten the folder structure
         var flattenedStructure = gamesFolder.FlattenStructure();
-        var result = ProcessFlattenedStructure(flattenedStructure);
-        return result;
+        // Process the flattened structure and return the result
+        return ProcessFlattenedStructure(flattenedStructure);
     }
 
     private Dictionary<string, List<string>> ProcessFlattenedStructure(Dictionary<string, List<string>> flattenedStructure)
     {
-        var categories = new Dictionary<string, List<string>>
-        {
-            ["Waiting"] = new(),
-            ["Early"] = new(),
-            ["Normal"] = new()
-        };
+        var result = new Dictionary<string, List<string>>();
 
         foreach (var (folderName, links) in flattenedStructure)
         {
-            var category = GetCategory(folderName);
+            // Filter Steam URLs and extract game names
             var games = links
                 .Where(url => url.Contains("steampowered.com"))
                 .Select(ExtractGameName)
                 .ToList();
 
-            categories[category].AddRange(games);
+            // Only add non-empty folders to the result
+            if (games.Count > 0)
+            {
+                result[folderName] = games;
+            }
         }
 
-        return categories;
-    }
-
-    private string GetCategory(string folderName)
-    {
-        return folderName.ToLower() switch
-        {
-            "gwaiting" => "Waiting",
-            "gearly" => "Early",
-            _ => "Normal"
-        };
+        return result;
     }
 
     private string ExtractGameName(string url)
     {
+        // Use regex to extract game name from Steam URL
         var match = Regex.Match(url, SteamAppPattern);
         if (match.Success)
         {
@@ -68,10 +60,7 @@ public class GamesParser : BookmarkParserBase
 
     private string NormalizeGameName(string gameName)
     {
+        // Convert underscores to spaces, split into words, convert to lowercase, and join back
         return string.Join(" ", gameName.Replace("_", " ").Split().Select(s => s.ToLower())).Trim();
-    }
-
-    public GamesParser(IJsWriter jsWriter) : base(jsWriter)
-    {
     }
 }

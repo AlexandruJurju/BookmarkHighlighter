@@ -13,5 +13,5 @@ var templatePath = @"JsWriters\template.js";
 var outputPath = @"Highlighter Extension\GameHighlighter.js";
 IJsWriter writer = new JsWriter(templatePath, outputPath);
 
-BookmarkParserBase gameParser = new GamesParser(writer);
-gameParser.ParseAndWriteToJson(bookmarkStructure);
+BookmarkParserBase gameParser = new GamesParser();
+var gameDict = gameParser.Parse(bookmarkStructure);
