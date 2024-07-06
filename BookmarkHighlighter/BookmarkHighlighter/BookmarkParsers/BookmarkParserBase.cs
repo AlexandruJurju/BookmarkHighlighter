@@ -1,28 +1,14 @@
-﻿using BookmarkHighlighter.JsWriters;
-using BookmarkHighlighter.Structure;
+﻿using BookmarkHighlighter.Structure;
 
 namespace BookmarkHighlighter.BookmarkParsers;
 
 public abstract class BookmarkParserBase
 {
-    private readonly IJsWriter _jsWriter;
-
-    protected BookmarkParserBase(IJsWriter jsWriter)
-    {
-        _jsWriter = jsWriter;
-    }
-
-    public void ParseAndWriteToJson(BookmarkFolder rootFolder)
-    {
-        var result = Parse(rootFolder);
-        _jsWriter.Write(result);
-    }
-
-    protected abstract Dictionary<string, List<string>> Parse(BookmarkFolder rootFolder);
+    public abstract List<BookmarkFolder> Parse(BookmarkFolder rootFolder);
 
     protected BookmarkFolder? FindFolder(BookmarkFolder folder, string name)
     {
-        if (folder.Name == name)
+        if (folder.Name.Equals(name, StringComparison.OrdinalIgnoreCase))
         {
             return folder;
         }
@@ -39,19 +25,38 @@ public abstract class BookmarkParserBase
         return null;
     }
 
-    protected IEnumerable<Bookmark> GetLinksFromFolder(BookmarkFolder folder)
+    protected List<BookmarkFolder> ProcessFolder(BookmarkFolder folder, Func<Bookmark, bool> filterPredicate, Func<Bookmark, Bookmark> transformFunc)
     {
-        foreach (var bookmark in folder.Bookmarks)
+        var result = new List<BookmarkFolder>();
+
+        // Process current folder
+        var processedFolder = ProcessSingleFolder(folder, filterPredicate, transformFunc);
+        if (processedFolder.Bookmarks.Count > 0)
         {
-            yield return bookmark;
+            result.Add(processedFolder);
         }
 
+        // Process subfolders
         foreach (var subfolder in folder.Subfolders)
         {
-            foreach (var bookmark in GetLinksFromFolder(subfolder))
+            result.AddRange(ProcessFolder(subfolder, filterPredicate, transformFunc));
+        }
+
+        return result;
+    }
+
+    private BookmarkFolder ProcessSingleFolder(BookmarkFolder folder, Func<Bookmark, bool> filterPredicate, Func<Bookmark, Bookmark> transformFunc)
+    {
+        var processedFolder = new BookmarkFolder(folder.Name);
+
+        foreach (var bookmark in folder.Bookmarks)
+        {
+            if (filterPredicate(bookmark))
             {
-                yield return bookmark;
+                processedFolder.Bookmarks.Add(transformFunc(bookmark));
             }
         }
+
+        return processedFolder;
     }
 }

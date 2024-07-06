@@ -1,5 +1,4 @@
 ﻿using System.Text.RegularExpressions;
-using BookmarkHighlighter.JsWriters;
 using BookmarkHighlighter.Structure;
 
 namespace BookmarkHighlighter.BookmarkParsers;
@@ -8,54 +7,24 @@ public class GamesParser : BookmarkParserBase
 {
     private const string SteamAppPattern = @"/app/\d+/(.*?)/";
 
-    protected override Dictionary<string, List<string>> Parse(BookmarkFolder rootFolder)
+    public override List<BookmarkFolder> Parse(BookmarkFolder rootFolder)
     {
+        // Find the "Games" folder in the root folder
         var gamesFolder = FindFolder(rootFolder, "Games");
         if (gamesFolder == null)
         {
             throw new InvalidOperationException("Games folder not found");
         }
 
-        var flattenedStructure = gamesFolder.FlattenStructure();
-        var result = ProcessFlattenedStructure(flattenedStructure);
-        return result;
-    }
-
-    private Dictionary<string, List<string>> ProcessFlattenedStructure(Dictionary<string, List<string>> flattenedStructure)
-    {
-        var categories = new Dictionary<string, List<string>>
-        {
-            ["Waiting"] = new(),
-            ["Early"] = new(),
-            ["Normal"] = new()
-        };
-
-        foreach (var (folderName, links) in flattenedStructure)
-        {
-            var category = GetCategory(folderName);
-            var games = links
-                .Where(url => url.Contains("steampowered.com"))
-                .Select(ExtractGameName)
-                .ToList();
-
-            categories[category].AddRange(games);
-        }
-
-        return categories;
-    }
-
-    private string GetCategory(string folderName)
-    {
-        return folderName.ToLower() switch
-        {
-            "gwaiting" => "Waiting",
-            "gearly" => "Early",
-            _ => "Normal"
-        };
+        // Process the Games folder and its subfolders
+        return ProcessFolder(gamesFolder, 
+            bookmark => bookmark.Url.Contains("steampowered.com"), 
+            bookmark => new Bookmark(ExtractGameName(bookmark.Url), bookmark.Url));
     }
 
     private string ExtractGameName(string url)
     {
+        // Use regex to extract game name from Steam URL
         var match = Regex.Match(url, SteamAppPattern);
         if (match.Success)
         {
@@ -68,10 +37,7 @@ public class GamesParser : BookmarkParserBase
 
     private string NormalizeGameName(string gameName)
     {
+        // Convert underscores to spaces, split into words, convert to lowercase, and join back
         return string.Join(" ", gameName.Replace("_", " ").Split().Select(s => s.ToLower())).Trim();
-    }
-
-    public GamesParser(IJsWriter jsWriter) : base(jsWriter)
-    {
     }
 }
