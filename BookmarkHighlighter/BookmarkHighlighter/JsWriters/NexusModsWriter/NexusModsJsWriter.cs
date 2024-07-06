@@ -13,16 +13,11 @@ public class NexusModsJsWriter : JsWriterBase
 
     protected override void WriteBookmarks(List<BookmarkFolder> bookmarkFolders, StreamWriter writer)
     {
-        foreach (var folder in bookmarkFolders)
-        {
-            var linkUrlString = string.Join(", ", folder.Bookmarks.Select(b => $"\"{b.Url}\""));
-            var folderNameWithoutSpaces = RemoveSpaces(folder.Name);
-            writer.WriteLine($"const {folderNameWithoutSpaces}=[{linkUrlString}];");
-        }
-    }
+        var allUrls = bookmarkFolders
+            .SelectMany(folder => folder.Bookmarks)
+            .Select(bookmark => $"\"{bookmark.Url}\"");
 
-    private string RemoveSpaces(string input)
-    {
-        return new string(input.Where(c => !char.IsWhiteSpace(c)).ToArray());
+        var urlString = string.Join(", ", allUrls);
+        writer.WriteLine($"const mods=[{urlString}];");
     }
 }
