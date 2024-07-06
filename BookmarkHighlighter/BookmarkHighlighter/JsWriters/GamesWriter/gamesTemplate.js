@@ -59,8 +59,8 @@ const intervalId = window.setInterval(function () {
     function colorSteamDb(currentUrl) {
         console.log("colorSteamDb");
         console.log(currentUrl)
-        
-        if (currentUrl.startsWith("https://steamdb.info/stats/gameratings/?all") || currentUrl.startsWith("https://steamdb.info/charts/")) {
+
+        if (currentUrl.startsWith("https://steamdb.info/stats/gameratings") || currentUrl.startsWith("https://steamdb.info/charts/")) {
             colorSteamDbAllFavoriteGames();
         } else {
             colorSteamDbGamesByYear();
