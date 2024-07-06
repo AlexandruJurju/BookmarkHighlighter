@@ -8,15 +8,27 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <None Update="JsWriters\template.js">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
-    </ItemGroup>
-
-    <ItemGroup>
         <Content Include="Highlighter Extension\**">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>
+        <Content Update="Highlighter Extension\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Update="JsWriters\GamesWriter\gamesTemplate.js">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+      <None Update="JsWriters\NexusModsWriter\nexusModsTemplate.js">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Remove="Highlighter Extension\**" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <EmbeddedResource Remove="Highlighter Extension\**" />
     </ItemGroup>
     
 
