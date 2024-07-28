@@ -9,7 +9,10 @@ public class NexusModsJsWriter : JsWriterBase
     {
     }
 
-    protected override string GetTemplatePath() => FilePaths.NexusModsTemplatePath;
+    protected override string GetTemplatePath()
+    {
+        return FilePaths.NexusModsTemplatePath;
+    }
 
     protected override void WriteBookmarks(List<BookmarkFolder> bookmarkFolders, StreamWriter writer)
     {

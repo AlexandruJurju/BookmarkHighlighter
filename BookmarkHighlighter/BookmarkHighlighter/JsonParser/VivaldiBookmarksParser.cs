@@ -1,40 +1,33 @@
-﻿using System.Text.Json;
-using BookmarkHighlighter.Parser;
+using System.Text.Json;
 using BookmarkHighlighter.Structure;
 
 namespace BookmarkHighlighter.JsonParser;
 
-public class JsonParser : IJsonParser
+public class VivaldiBookmarksParser : IBookmarkParser
 {
     private readonly string _bookmarkFilePath;
 
-    public JsonParser(string bookmarkFilePath)
+    public VivaldiBookmarksParser(string bookmarkFilePath)
     {
         if (string.IsNullOrWhiteSpace(bookmarkFilePath))
-        {
             throw new ArgumentException("Bookmark file path cannot be null or empty.", nameof(bookmarkFilePath));
-        }
 
         if (!File.Exists(bookmarkFilePath))
-        {
             throw new FileNotFoundException("Bookmark file not found.", bookmarkFilePath);
-        }
 
         _bookmarkFilePath = bookmarkFilePath;
     }
 
     public BookmarkFolder GetBookmarkStructure()
     {
-        string json = File.ReadAllText(_bookmarkFilePath);
-        using JsonDocument document = JsonDocument.Parse(json);
+        var json = File.ReadAllText(_bookmarkFilePath);
+        using var document = JsonDocument.Parse(json);
 
-        JsonElement root = document.RootElement;
-        if (!root.TryGetProperty("roots", out JsonElement roots) ||
-            !roots.TryGetProperty("bookmark_bar", out JsonElement bookmarkBar) ||
-            !bookmarkBar.TryGetProperty("children", out JsonElement bookmarkFolders))
-        {
+        var root = document.RootElement;
+        if (!root.TryGetProperty("roots", out var roots) ||
+            !roots.TryGetProperty("bookmark_bar", out var bookmarkBar) ||
+            !bookmarkBar.TryGetProperty("children", out var bookmarkFolders))
             throw new InvalidOperationException("Invalid bookmark structure.");
-        }
 
         return ParseBookmarkFolder("Root", bookmarkFolders);
     }
@@ -43,27 +36,23 @@ public class JsonParser : IJsonParser
     {
         var folder = new BookmarkFolder(name);
 
-        foreach (JsonElement child in element.EnumerateArray())
-        {
-            if (child.TryGetProperty("type", out JsonElement type))
+        foreach (var child in element.EnumerateArray())
+            if (child.TryGetProperty("type", out var type))
             {
-                string typeValue = type.GetString() ?? "";
-                string itemName = child.GetProperty("name").GetString() ?? "";
+                var typeValue = type.GetString() ?? "";
+                var itemName = child.GetProperty("name").GetString() ?? "";
 
                 if (typeValue == "folder")
                 {
-                    if (child.TryGetProperty("children", out JsonElement children))
-                    {
+                    if (child.TryGetProperty("children", out var children))
                         folder.Subfolders.Add(ParseBookmarkFolder(itemName, children));
-                    }
                 }
                 else if (typeValue == "url")
                 {
-                    string url = child.GetProperty("url").GetString() ?? "";
+                    var url = child.GetProperty("url").GetString() ?? "";
                     folder.Bookmarks.Add(new Bookmark(itemName, url));
                 }
             }
-        }
 
         return folder;
     }
