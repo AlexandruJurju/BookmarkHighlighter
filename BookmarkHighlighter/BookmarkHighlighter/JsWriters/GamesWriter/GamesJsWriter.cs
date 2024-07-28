@@ -5,9 +5,14 @@ namespace BookmarkHighlighter.JsWriters.GamesWriter;
 
 public class GamesJsWriter : JsWriterBase
 {
-    public GamesJsWriter(string outputPath) : base(outputPath) { }
+    public GamesJsWriter(string outputPath) : base(outputPath)
+    {
+    }
 
-    protected override string GetTemplatePath() => FilePaths.GamesTemplatePath;
+    protected override string GetTemplatePath()
+    {
+        return FilePaths.GamesTemplatePath;
+    }
 
     protected override void WriteBookmarks(List<BookmarkFolder> bookmarkFolders, StreamWriter writer)
     {

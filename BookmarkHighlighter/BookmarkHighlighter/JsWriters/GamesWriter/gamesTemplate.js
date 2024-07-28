@@ -58,15 +58,25 @@ const intervalId = window.setInterval(function () {
 
     function colorSteamDb(currentUrl) {
         console.log("colorSteamDb");
-        console.log(currentUrl)
+        console.log(currentUrl);
 
-        if (currentUrl.startsWith("https://steamdb.info/stats/gameratings") || currentUrl.startsWith("https://steamdb.info/charts/")) {
+        if (currentUrl.startsWith("https://steamdb.info/stats/gameratings")) {
+            // Check if there's a year after "gameratings"
+            const match = currentUrl.match(/gameratings\/(\d{4})/);
+            if (match) {
+                // If there's a year, use colorSteamDbGamesByYear
+                colorSteamDbGamesByYear();
+            } else {
+                // If there's no year, use colorSteamDbAllFavoriteGames
+                colorSteamDbAllFavoriteGames();
+            }
+        } else if (currentUrl.startsWith("https://steamdb.info/charts/")) {
             colorSteamDbAllFavoriteGames();
         } else {
             colorSteamDbGamesByYear();
         }
     }
-
+r
 
     function colorSteamDbAllFavoriteGames() {
         console.log("steamDbFavorite")
@@ -85,16 +95,8 @@ const intervalId = window.setInterval(function () {
 
     function colorSteamDbGamesByYear() {
         console.log("steamDbGamesByYear")
-
         const elements = document.getElementsByClassName("b");
-        const selectedElements = [];
-
-        for (let i = 0; i < elements.length; i++) {
-            selectedElements.push(elements[i]);
-        }
-
-        // Now, call the applyStyles function with the selected elements list
-        applyStyles(selectedElements);
+        applyStyles(elements);
     }
 
     function colorSteamDbInstasearch() {

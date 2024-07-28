@@ -12,10 +12,7 @@ public class GamesParser : BookmarkParserBase
     {
         // Find the "Games" folder in the root folder
         var gamesFolder = FindFolder(rootFolder, FolderNames.Games);
-        if (gamesFolder == null)
-        {
-            throw new InvalidOperationException("Games folder not found");
-        }
+        if (gamesFolder == null) throw new InvalidOperationException("Games folder not found");
 
         // Process the Games folder and its subfolders
         return ProcessFolder(gamesFolder,

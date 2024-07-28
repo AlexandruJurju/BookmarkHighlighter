@@ -4,8 +4,8 @@ namespace BookmarkHighlighter.JsWriters;
 
 public abstract class JsWriterBase
 {
-    protected readonly string TemplatePath;
     protected readonly string OutputPath;
+    protected readonly string TemplatePath;
 
     protected JsWriterBase(string outputPath)
     {
@@ -18,7 +18,7 @@ public abstract class JsWriterBase
     public void Write(List<BookmarkFolder> bookmarkFolders)
     {
         // Write content to the file
-        using (var writer = new StreamWriter(OutputPath, true)) 
+        using (var writer = new StreamWriter(OutputPath, true))
         {
             // Write processed bookmarks
             WriteBookmarks(bookmarkFolders, writer);

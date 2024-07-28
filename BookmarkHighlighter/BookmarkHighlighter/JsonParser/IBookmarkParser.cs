@@ -1,8 +1,8 @@
 ﻿using BookmarkHighlighter.Structure;
 
-namespace BookmarkHighlighter.Parser;
+namespace BookmarkHighlighter.JsonParser;
 
-public interface IJsonParser
+public interface IBookmarkParser
 {
     BookmarkFolder GetBookmarkStructure();
 }

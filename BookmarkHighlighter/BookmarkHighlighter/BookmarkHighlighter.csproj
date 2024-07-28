@@ -11,25 +11,29 @@
         <Content Include="Highlighter Extension\**">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </Content>
-        <Content Update="Highlighter Extension\**" />
+        <Content Update="Highlighter Extension\**"/>
     </ItemGroup>
 
     <ItemGroup>
-      <None Update="JsWriters\GamesWriter\gamesTemplate.js">
-        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      </None>
-      <None Update="JsWriters\NexusModsWriter\nexusModsTemplate.js">
-        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-      </None>
+        <None Update="JsWriters\GamesWriter\gamesTemplate.js">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </None>
+        <None Update="JsWriters\NexusModsWriter\nexusModsTemplate.js">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </None>
     </ItemGroup>
 
     <ItemGroup>
-      <Compile Remove="Highlighter Extension\**" />
+        <Compile Remove="Highlighter Extension\**"/>
     </ItemGroup>
 
     <ItemGroup>
-      <EmbeddedResource Remove="Highlighter Extension\**" />
+        <EmbeddedResource Remove="Highlighter Extension\**"/>
     </ItemGroup>
-    
+
+    <ItemGroup>
+        <PackageReference Include="HtmlAgilityPack" Version="1.11.61"/>
+    </ItemGroup>
+
 
 </Project>

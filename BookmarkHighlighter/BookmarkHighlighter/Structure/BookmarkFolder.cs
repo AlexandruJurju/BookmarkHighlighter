@@ -4,14 +4,14 @@ namespace BookmarkHighlighter.Structure;
 
 public class BookmarkFolder
 {
-    public string Name { get; }
-    public List<BookmarkFolder> Subfolders { get; } = new();
-    public List<Bookmark> Bookmarks { get; } = new();
-
     public BookmarkFolder(string name)
     {
         Name = name;
     }
+
+    public string Name { get; }
+    public List<BookmarkFolder> Subfolders { get; } = new();
+    public List<Bookmark> Bookmarks { get; } = new();
 
     public Dictionary<string, List<string>> FlattenStructure()
     {
@@ -27,9 +27,6 @@ public class BookmarkFolder
         var links = new List<string>(folder.Bookmarks.Select(b => b.Url));
         result.TryAdd(folder.Name, links);
 
-        foreach (var subfolder in folder.Subfolders)
-        {
-            FlattenStructureInternal(subfolder, result);
-        }
+        foreach (var subfolder in folder.Subfolders) FlattenStructureInternal(subfolder, result);
     }
 }
