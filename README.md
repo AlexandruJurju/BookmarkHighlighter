@@ -18,9 +18,9 @@ CopyGameHighlighterExtensionGenerator.exe path/to/bookmarks.json path/to/templat
 The generated extension will be in the specified output directory.
 Load the extension in your browser:
 
-Chrome: Go to chrome://extensions/, enable "Developer mode", and click "Load unpacked".
-Firefox: Go to about:debugging#/runtime/this-firefox, click "Load Temporary Add-on", and select the manifest.json file.
-Edge: Go to edge://extensions/, enable "Developer mode", and click "Load unpacked".
+- Chrome: Go to chrome://extensions/, enable "Developer mode", and click "Load unpacked".
+- Firefox: Go to about:debugging#/runtime/this-firefox, click "Load Temporary Add-on", and select the manifest.json file.
+- Edge: Go to edge://extensions/, enable "Developer mode", and click "Load unpacked".
 
 
 
