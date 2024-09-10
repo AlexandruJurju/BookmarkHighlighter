@@ -1,19 +1,17 @@
 ﻿const nexusIntervalId = window.setInterval(function () {
     const font_size = "20px";
     const font_color = "white";
-    const border_color = "#008000";  // Green color for the border
-    const border_width = "10px";  // Width of the border
-    const border_style = "solid";  // Style of the border
+    const downloaded_color = "#008000";  // Green color for downloaded mods
+    const not_downloaded_color = "#a71930";  // Red color for not downloaded mods
+    const border_width = "10px";
+    const border_style = "solid";
 
-    function applyStyles(modTile) {
+    function applyStyles(modTile, isDownloaded) {
         if (modTile) {
-            // Add a green border to the mod tile
-            modTile.style.border = `${border_width} ${border_style} ${border_color}`;
-
-            // Ensure the border is visible by adding some padding
+            const borderColor = isDownloaded ? downloaded_color : not_downloaded_color;
+            modTile.style.border = `${border_width} ${border_style} ${borderColor}`;
             modTile.style.padding = "5px";
 
-            // Style the tile name (assuming it's in an element with class 'tile-name')
             const tileName = modTile.querySelector('.tile-name a');
             if (tileName) {
                 tileName.style.fontSize = font_size;
@@ -22,18 +20,17 @@
         }
     }
 
-    function colorModTile(href) {
-        const modTile = document.querySelector(`.mod-tile-left a[href="${href}"]`);
-        if (modTile) {
-            const tileElement = modTile.closest('.mod-tile-left');
-            if (tileElement) {
-                applyStyles(tileElement);
+    function colorModTiles() {
+        const allModTiles = document.querySelectorAll('.mod-tile-left');
+        allModTiles.forEach(tileElement => {
+            const modLink = tileElement.querySelector('a');
+            if (modLink) {
+                const href = modLink.getAttribute('href');
+                const isDownloaded = mods.includes(href);
+                applyStyles(tileElement, isDownloaded);
             }
-        }
+        });
     }
 
-    // Apply styling to each mod in the list
-    mods.forEach(modUrl => {
-        colorModTile(modUrl);
-    });
+    colorModTiles();
 }, 1000);  // Run every 1000 milliseconds (1 second)
