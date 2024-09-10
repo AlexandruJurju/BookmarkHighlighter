@@ -76,7 +76,6 @@ const intervalId = window.setInterval(function () {
             colorSteamDbGamesByYear();
         }
     }
-r
 
     function colorSteamDbAllFavoriteGames() {
         console.log("steamDbFavorite")
