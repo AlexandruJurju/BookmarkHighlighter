@@ -1,0 +1,18 @@
+{
+   "name": "Bookmark Highlighter",
+   "description": "This extension is made for demonstration purposes",
+   "version": "1.0.1",
+   "manifest_version": 3,
+   "permissions": [
+      "bookmarks"
+   ],
+   "background": {
+      "service_worker": "background.js"
+   },
+   "content_scripts": [
+      {
+         "matches": ["<all_urls>"],
+         "js": ["content.js"]
+      }
+   ]
+}

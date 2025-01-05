@@ -1,0 +1,19 @@
+{
+   "compilerOptions": {
+     "target": "ES2017",
+     "module": "ES2022",
+     "strict": true,
+     "esModuleInterop": true,
+     "skipLibCheck": true,
+     "forceConsistentCasingInFileNames": true,
+     "outDir": "./dist",
+     "rootDir": "./src",
+     "moduleResolution": "node",
+     "typeRoots": ["./node_modules/@types", "./types"],
+     "lib": ["DOM", "ES2021"],
+     "types": ["chrome"],
+     "noImplicitAny": false
+   },
+   "include": ["src/**/*", "types/**/*"],
+   "exclude": ["node_modules"]
+ }
