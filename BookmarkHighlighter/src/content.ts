@@ -1,5 +1,10 @@
-import {GameHighlightingService} from "./services/game-highlighting.service";
-import {NexusHighlightingService} from "./services/nexus-highlighting.service";
+import { GameHighlightingStrategy } from "./services/game-highlighting-strategy";
+import { HighlightingService } from "./services/highlighting.service";
+import { NexusHighlightingStrategy } from "./services/nexus-highlighting-strategy";
 
-const highlightingService = GameHighlightingService.getInstance();
-const nexusHighlightingService = NexusHighlightingService.getInstance();
+const highlightingService = HighlightingService.getInstance();
+const gameStrategy = new GameHighlightingStrategy();
+const nexusStrategy = new NexusHighlightingStrategy();
+
+highlightingService.setStrategy(gameStrategy);
+highlightingService.setStrategy(nexusStrategy);

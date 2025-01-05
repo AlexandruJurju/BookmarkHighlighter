@@ -1,25 +1,22 @@
-﻿import {ElementSelector, GameCategories} from "../interfaces/types";
-import {GameBookmarkService} from "./game-bookmark.service";
+﻿import { HighlightingStrategy } from "../interfaces/highlighting-strategy";
+import { BookmarkNode, ElementSelector, GameCategories } from "../interfaces/types";
+import { BookmarkManager } from "./bookmark-manager";
 
-export class GameHighlightingService {
-    private static instance: GameHighlightingService;
+export class GameHighlightingStrategy implements HighlightingStrategy {
     private gameCategories: GameCategories | null = null;
     private readonly selectors: ElementSelector[];
 
-    private constructor() {
+    constructor() {
         this.selectors = this.initializeSelectors();
-        this.initializeService();
-        this.injectStyles();
     }
 
-    static getInstance(): GameHighlightingService {
-        if (!this.instance) {
-            this.instance = new GameHighlightingService();
-        }
-        return this.instance;
+    async initialize(): Promise<void> {
+        this.gameCategories = await this.getGameCategories();
+        this.applyHighlighting();
+        this.startPeriodicHighlighting();
     }
 
-    private injectStyles(): void {
+    injectStyles(): void {
         const styles = `
             .steam-highlighter {
                 font-size: 20px;
@@ -44,11 +41,51 @@ export class GameHighlightingService {
         document.head.appendChild(styleSheet);
     }
 
-    private async initializeService(): Promise<void> {
-        const gameBookmarkService = GameBookmarkService.getInstance();
-        this.gameCategories = await gameBookmarkService.getGameCategories();
-        this.applyHighlighting();
-        this.startPeriodicHighlighting();
+    private async getGameCategories(): Promise<GameCategories> {
+        const bookmarkTree = await BookmarkManager.getBookmarkTree();
+        const gamesFolder = BookmarkManager.findFolder(bookmarkTree[0], "Games");
+
+        if (!gamesFolder) {
+            return { early: [], waiting: [], normal: [] };
+        }
+
+        return this.categorizeGames(gamesFolder);
+    }
+
+    private categorizeGames(gamesFolder: BookmarkNode): GameCategories {
+        const categories: GameCategories = {
+            early: [],
+            waiting: [],
+            normal: []
+        };
+
+        this.processGamesFolder(gamesFolder, categories);
+        return categories;
+    }
+
+    private processGamesFolder(folder: BookmarkNode, categories: GameCategories): void {
+        if (!folder.children) return;
+
+        for (const item of folder.children) {
+            if (item.url?.includes('store.steampowered.com/app/')) {
+                const gameName = this.extractGameName(item.url);
+                if (!gameName) continue;
+
+                switch (folder.title.toLowerCase()) {
+                    case 'gearly':
+                        categories.early.push(gameName);
+                        break;
+                    case 'gwaiting':
+                        categories.waiting.push(gameName);
+                        break;
+                    default:
+                        categories.normal.push(gameName);
+                        break;
+                }
+            } else if (item.children) {
+                this.processGamesFolder(item, categories);
+            }
+        }
     }
 
     private initializeSelectors(): ElementSelector[] {
@@ -77,7 +114,7 @@ export class GameHighlightingService {
                         })
                         .filter((link): link is HTMLElement => link !== null);
                 }
-            },
+            }
         ];
     }
 
@@ -85,7 +122,7 @@ export class GameHighlightingService {
         setInterval(() => this.applyHighlighting(), 5000);
     }
 
-    private applyHighlighting(): void {
+    applyHighlighting(): void {
         if (!this.gameCategories) return;
 
         const currentUrl = window.location.href;
@@ -138,5 +175,14 @@ export class GameHighlightingService {
             return 'steam-highlighter--waiting';
         }
         return 'steam-highlighter--not-played';
+    }
+
+    private extractGameName(url: string): string {
+        const match = url.match(/\/app\/\d+\/(.*?)\//);
+        return match ? this.normalizeGameName(match[1]) : '';
+    }
+
+    private normalizeGameName(gameName: string): string {
+        return gameName.replace(/_/g, ' ').toLowerCase().trim();
     }
 }

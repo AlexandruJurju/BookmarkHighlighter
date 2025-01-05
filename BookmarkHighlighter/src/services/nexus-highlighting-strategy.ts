@@ -1,22 +1,17 @@
-﻿import {NexusBookmarkService} from "./nexus-bookmarks.service";
+﻿import { HighlightingStrategy } from "../interfaces/highlighting-strategy";
+import { BookmarkManager } from "./bookmark-manager";
 
-export class NexusHighlightingService {
-    private static instance: NexusHighlightingService | null = null;
+export class NexusHighlightingStrategy implements HighlightingStrategy {
+    private static readonly NEXUS_MODS_PATTERN = /https?:\/\/www\.nexusmods\.com\/([^/]+)\/mods\/(\d+)/;
     private modUrls: string[] = [];
 
-    private constructor() {
-        this.initializeService();
-        this.injectStyles();
+    async initialize(): Promise<void> {
+        this.modUrls = await this.getNexusModUrls();
+        this.applyHighlighting();
+        this.startPeriodicHighlighting();
     }
 
-    static getInstance(): NexusHighlightingService {
-        if (!this.instance) {
-            this.instance = new NexusHighlightingService();
-        }
-        return this.instance;
-    }
-
-    private injectStyles(): void {
+    injectStyles(): void {
         const styles = `
             .nexus-highlighter {
                 padding: 5px;
@@ -38,17 +33,23 @@ export class NexusHighlightingService {
         document.head.appendChild(styleSheet);
     }
 
-    private async initializeService(): Promise<void> {
-        const nexusBookmarkService = NexusBookmarkService.getInstance();
-        this.modUrls = await nexusBookmarkService.getNexusModUrls();
-        this.startPeriodicHighlighting();
+    private async getNexusModUrls(): Promise<string[]> {
+        const bookmarkTree = await BookmarkManager.getBookmarkTree();
+        const nexusFolder = BookmarkManager.findFolder(bookmarkTree[0], "Nexus Mods");
+
+        if (!nexusFolder) {
+            return [];
+        }
+
+        return BookmarkManager.extractModUrls(nexusFolder)
+            .filter(url => this.isValidNexusModLink(url));
     }
 
     private startPeriodicHighlighting(): void {
         setInterval(() => this.applyHighlighting(), 1000);
     }
 
-    private applyHighlighting(): void {
+    applyHighlighting(): void {
         const modTiles = document.querySelectorAll('.mod-tile-left');
         modTiles.forEach(tileElement => {
             if (!(tileElement instanceof HTMLElement)) return;
@@ -81,5 +82,9 @@ export class NexusHighlightingService {
         if (tileName instanceof HTMLElement) {
             tileName.classList.add('nexus-highlighter__title');
         }
+    }
+
+    private isValidNexusModLink(url: string): boolean {
+        return NexusHighlightingStrategy.NEXUS_MODS_PATTERN.test(url);
     }
 }
