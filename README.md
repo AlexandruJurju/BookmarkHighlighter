@@ -1,35 +1,36 @@
 # BookmarkHighlighter
 # Overview
-This C# application automates the process of creating a browser extension that highlights specific games on web pages based on bookmarked URLs. It reads bookmark data in JSON format, processes a JavaScript template, and generates the necessary code for a browser extension.
+A TypeScript browser extension that highlights games and mods on Steam and Nexus Mods based on the browser bookmarks. The extension uses the Strategy pattern to handle different types of highlighting and makes it easy to add new highlighting behaviors.
 
 # Installation
+1. Clone this repository:
+```git clone https://github.com/yourusername/bookmark-highlighter.git```
 
-Clone this repository:
-Copygit clone https://github.com/yourusername/game-highlighter-extension-generator.git
-Open the solution file (GameHighlighterExtensionGenerator.sln) in Visual Studio.
-Build the solution (Press F6 or use Build > Build Solution).
+2. Install dependencies:
+```npm install```
+
+3. Build the extension:
+```npm run build```
+
+4. Load the extension in your browser:
+- Chrome: Go to chrome://extensions/, enable "Developer mode", and click "Load unpacked"
+- Firefox: Go to about:debugging#/runtime/this-firefox, click "Load Temporary Add-on"
+- Edge: Go to edge://extensions/, enable "Developer mode", and click "Load unpacked"
 
 # Usage
+1. Organize your bookmarks:
+  - Create a "Games" folder for Steam games
+  - Optional subfolders: "GEarly" for Early Access, "GWaiting" for waitlist
+  - Create a "Nexus Mods" folder for mod bookmarks
 
-Prepare your bookmarks JSON file (see Configuration for format details).
-Run the application:
-CopyGameHighlighterExtensionGenerator.exe path/to/bookmarks.json path/to/template.js path/to/output/extension
-
-The generated extension will be in the specified output directory.
-Load the extension in your browser:
-
-- Chrome: Go to chrome://extensions/, enable "Developer mode", and click "Load unpacked".
-- Firefox: Go to about:debugging#/runtime/this-firefox, click "Load Temporary Add-on", and select the manifest.json file.
-- Edge: Go to edge://extensions/, enable "Developer mode", and click "Load unpacked".
-
+2. The extension will automatically:
+  - Highlight Steam games in different colors based on their category
+  - Show green borders for bookmarked Nexus mods
+  - Update highlights immediately on page load and every 5 seconds
 
 
 # How It Works
-
-- Bookmark Processing: The application reads the JSON file containing bookmark data. It extracts relevant information such as URLs and titles.
-- Template Processing: A JavaScript template file is read and processed. This template contains placeholders for bookmark data and extension logic.
-- Code Generation: The application generates the necessary JavaScript code by combining the processed bookmark data with the template.
-- Extension Creation: The generated code, along with other required files (manifest.json, icons, etc.), is written to the output directory, creating a complete browser extension.
-- Highlighting: When installed, the extension monitors web page URLs and applies highlighting to games that match the bookmarked URLs.
-
-
+- Bookmark Processing: Reads Chrome bookmarks to categorize games and mods
+- Strategy Pattern: The extension uses separate strategies for Steam and Nexus highlighting
+- Highlighting: Applies visual indicators based on bookmark categories
+- Extension Core: Built with TypeScript for better type safety and maintainability

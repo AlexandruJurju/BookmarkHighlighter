@@ -63,6 +63,9 @@ export class GameHighlightingStrategy implements HighlightingStrategy {
         return categories;
     }
 
+    // process the folders inside the game folder
+    // categorizes the urls based on the folder they are in
+    // if a node has other folders inside, it will recursively process them
     private processGamesFolder(folder: BookmarkNode, categories: GameCategories): void {
         if (!folder.children) return;
 
@@ -88,6 +91,8 @@ export class GameHighlightingStrategy implements HighlightingStrategy {
         }
     }
 
+    // selectors for different websites
+    // each website has a different way of displaying game titles
     private initializeSelectors(): ElementSelector[] {
         return [
             {

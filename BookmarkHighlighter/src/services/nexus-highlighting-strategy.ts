@@ -33,6 +33,7 @@ export class NexusHighlightingStrategy implements HighlightingStrategy {
         document.head.appendChild(styleSheet);
     }
 
+    // get all the urls from the Nexus Mods folder
     private async getNexusModUrls(): Promise<string[]> {
         const bookmarkTree = await BookmarkManager.getBookmarkTree();
         const nexusFolder = BookmarkManager.findFolder(bookmarkTree[0], "Nexus Mods");
@@ -45,6 +46,7 @@ export class NexusHighlightingStrategy implements HighlightingStrategy {
             .filter(url => this.isValidNexusModLink(url));
     }
 
+    // every second, apply highlighting to the mod urls
     private startPeriodicHighlighting(): void {
         setInterval(() => this.applyHighlighting(), 1000);
     }

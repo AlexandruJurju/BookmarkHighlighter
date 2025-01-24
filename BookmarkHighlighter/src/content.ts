@@ -1,3 +1,5 @@
+// does the actual highlghting of the elements on the pages
+
 import { GameHighlightingStrategy } from "./services/game-highlighting-strategy";
 import { HighlightingService } from "./services/highlighting.service";
 import { NexusHighlightingStrategy } from "./services/nexus-highlighting-strategy";

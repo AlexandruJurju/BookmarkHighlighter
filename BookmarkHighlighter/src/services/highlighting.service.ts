@@ -1,5 +1,6 @@
 import { HighlightingStrategy } from "../interfaces/highlighting-strategy";
 
+// service that contains the highlighting strategy
 export class HighlightingService {
     private static instance: HighlightingService = new HighlightingService();
     private strategy: HighlightingStrategy | null = null;
