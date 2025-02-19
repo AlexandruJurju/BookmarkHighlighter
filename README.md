@@ -28,9 +28,5 @@ A TypeScript browser extension that highlights games and mods on Steam and Nexus
   - Show green borders for bookmarked Nexus mods
   - Update highlights immediately on page load and every 5 seconds
 
-
-# How It Works
-- Bookmark Processing: Reads Chrome bookmarks to categorize games and mods
-- Strategy Pattern: The extension uses separate strategies for Steam and Nexus highlighting
-- Highlighting: Applies visual indicators based on bookmark categories
-- Extension Core: Built with TypeScript for better type safety and maintainability
+# Example
+![Steam Highlighting](./docs/img/steam.png)
