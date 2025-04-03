@@ -1,5 +1,5 @@
-﻿import { HighlightingStrategy } from "../interfaces/highlighting-strategy";
-import { BookmarkManager } from "./bookmark-manager";
+﻿import {HighlightingStrategy} from "../interfaces/highlighting-strategy";
+import {BookmarkManager} from "./bookmark-manager";
 
 export class NexusHighlightingStrategy implements HighlightingStrategy {
     private static readonly NEXUS_MODS_PATTERN = /https?:\/\/www\.nexusmods\.com\/([^/]+)\/mods\/(\d+)/;
@@ -52,39 +52,32 @@ export class NexusHighlightingStrategy implements HighlightingStrategy {
     }
 
     applyHighlighting(): void {
-        const modTiles = document.querySelectorAll('.mod-tile-left');
-        modTiles.forEach(tileElement => {
-            if (!(tileElement instanceof HTMLElement)) return;
+        // Select ALL mod title links using data-e2eid (most reliable)
+        const modLinks = document.querySelectorAll<HTMLAnchorElement>('a[data-e2eid="mod-tile-title"]');
 
-            const modLink = tileElement.querySelector('a');
-            if (!modLink) return;
+        modLinks.forEach(modLink => {
+            if (!modLink.href) return;
 
-            const href = modLink.getAttribute('href');
-            if (!href) return;
-
-            this.applyStylesToTile(tileElement, href);
-            this.applyStylesToTitle(tileElement);
+            // Apply styles to the link itself (or closest mod tile if needed)
+            this.applyStylesToModLink(modLink);
         });
     }
 
-    private applyStylesToTile(tileElement: HTMLElement, href: string): void {
-        tileElement.classList.add('nexus-highlighter');
+    private applyStylesToModLink(modLink: HTMLAnchorElement): void {
+        const href = modLink.href;
+
+        // Apply highlighting to the link itself
+        modLink.classList.add('nexus-highlighter');
 
         if (this.modUrls.includes(href)) {
-            tileElement.classList.add('nexus-highlighter--downloaded');
-            tileElement.classList.remove('nexus-highlighter--not-downloaded');
+            modLink.classList.add('nexus-highlighter--downloaded');
+            modLink.classList.remove('nexus-highlighter--not-downloaded');
         } else {
-            tileElement.classList.add('nexus-highlighter--not-downloaded');
-            tileElement.classList.remove('nexus-highlighter--downloaded');
+            modLink.classList.add('nexus-highlighter--not-downloaded');
+            modLink.classList.remove('nexus-highlighter--downloaded');
         }
     }
 
-    private applyStylesToTitle(tileElement: HTMLElement): void {
-        const tileName = tileElement.querySelector('.tile-name a');
-        if (tileName instanceof HTMLElement) {
-            tileName.classList.add('nexus-highlighter__title');
-        }
-    }
 
     private isValidNexusModLink(url: string): boolean {
         return NexusHighlightingStrategy.NEXUS_MODS_PATTERN.test(url);
