@@ -1,17 +1,17 @@
-import { HighlightingStrategy } from "../interfaces/highlighting-strategy";
+import {IHighlighting} from "../interfaces/IHighlighting";
 
-// service that contains the highlighting strategy
 export class HighlightingService {
     private static instance: HighlightingService = new HighlightingService();
-    private strategy: HighlightingStrategy | null = null;
+    private strategy: IHighlighting | null = null;
 
-    private constructor() { }
+    private constructor() {
+    }
 
     static getInstance(): HighlightingService {
         return this.instance;
     }
 
-    setStrategy(strategy: HighlightingStrategy): void {
+    useHighlighter(strategy: IHighlighting): void {
         this.strategy = strategy;
         strategy.injectStyles();
         strategy.initialize();

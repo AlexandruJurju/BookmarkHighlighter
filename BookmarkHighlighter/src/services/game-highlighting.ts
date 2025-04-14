@@ -1,8 +1,8 @@
-﻿import { HighlightingStrategy } from "../interfaces/highlighting-strategy";
-import { BookmarkNode, ElementSelector, GameCategories } from "../interfaces/types";
-import { BookmarkManager } from "./bookmark-manager";
+﻿import {IHighlighting} from "../interfaces/IHighlighting";
+import {BookmarkNode, ElementSelector, GameCategories} from "../interfaces/types";
+import {BookmarkManager} from "./bookmark-manager";
 
-export class GameHighlightingStrategy implements HighlightingStrategy {
+export class GameHighlighting implements IHighlighting {
     private gameCategories: GameCategories | null = null;
     private readonly selectors: ElementSelector[];
 
@@ -46,7 +46,7 @@ export class GameHighlightingStrategy implements HighlightingStrategy {
         const gamesFolder = BookmarkManager.findFolder(bookmarkTree[0], "Games");
 
         if (!gamesFolder) {
-            return { early: [], waiting: [], normal: [] };
+            return {early: [], waiting: [], normal: []};
         }
 
         return this.categorizeGames(gamesFolder);
@@ -63,9 +63,6 @@ export class GameHighlightingStrategy implements HighlightingStrategy {
         return categories;
     }
 
-    // process the folders inside the game folder
-    // categorizes the urls based on the folder they are in
-    // if a node has other folders inside, it will recursively process them
     private processGamesFolder(folder: BookmarkNode, categories: GameCategories): void {
         if (!folder.children) return;
 
@@ -91,8 +88,6 @@ export class GameHighlightingStrategy implements HighlightingStrategy {
         }
     }
 
-    // selectors for different websites
-    // each website has a different way of displaying game titles
     private initializeSelectors(): ElementSelector[] {
         return [
             {

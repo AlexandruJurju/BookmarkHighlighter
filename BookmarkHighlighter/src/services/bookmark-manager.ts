@@ -1,6 +1,5 @@
 import { BookmarkNode } from "../interfaces/types";
 
-// class used to find the bookmark folders and extract the urls from it
 export class BookmarkManager {
     static async getBookmarkTree(): Promise<BookmarkNode[]> {
         return new Promise((resolve) => {
@@ -10,7 +9,6 @@ export class BookmarkManager {
         });
     }
 
-    // find the folder with the given name
     static findFolder(root: BookmarkNode, folderName: string): BookmarkNode | null {
         if (root.title === folderName) return root;
         if (root.children) {
@@ -22,7 +20,6 @@ export class BookmarkManager {
         return null;
     }
 
-    // extract all the urls from the given folder, if the node has a folder inside then it processes it recursively
     static extractModUrls(folder: BookmarkNode): string[] {
         const urls: string[] = [];
 

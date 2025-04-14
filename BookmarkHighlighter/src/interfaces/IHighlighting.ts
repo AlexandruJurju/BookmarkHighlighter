@@ -1,5 +1,4 @@
-// interface for each strategy
-export interface HighlightingStrategy {
+export interface IHighlighting {
     initialize(): Promise<void>;
     applyHighlighting(): void;
     injectStyles(): void;

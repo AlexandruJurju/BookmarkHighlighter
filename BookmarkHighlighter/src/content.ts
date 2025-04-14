@@ -1,12 +1,13 @@
-// does the actual highlghting of the elements on the pages
-
-import { GameHighlightingStrategy } from "./services/game-highlighting-strategy";
-import { HighlightingService } from "./services/highlighting.service";
-import { NexusHighlightingStrategy } from "./services/nexus-highlighting-strategy";
+import {GameHighlighting} from "./services/game-highlighting";
+import {HighlightingService} from "./services/highlighting.service";
+import {NexusHighlighting} from "./services/nexus-highlighting";
+import {SteamWorkshopHighlighting} from "./services/steam-workshop-highlighting";
 
 const highlightingService = HighlightingService.getInstance();
-const gameStrategy = new GameHighlightingStrategy();
-const nexusStrategy = new NexusHighlightingStrategy();
+const games = new GameHighlighting();
+const nexusMods = new NexusHighlighting();
+const steamWorkshop = new SteamWorkshopHighlighting();
 
-highlightingService.setStrategy(gameStrategy);
-highlightingService.setStrategy(nexusStrategy);
+highlightingService.useHighlighter(games);
+highlightingService.useHighlighter(nexusMods);
+highlightingService.useHighlighter(steamWorkshop);
