@@ -31,9 +31,6 @@ export class GameHighlighting implements IHighlighting {
             .steam-highlighter--waiting {
                 background-color: #666666;
             }
-            .steam-highlighter--not-played {
-                background-color: #a71930;
-            }
         `;
 
         const styleSheet = document.createElement("style");

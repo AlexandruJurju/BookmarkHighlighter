@@ -59,10 +59,8 @@ export class SteamWorkshopHighlighting implements IHighlighting {
 
         if (this.modUrls.includes(href)) {
             modLink.classList.add('steam-workshop-highlighter--downloaded');
-            modLink.classList.remove('steam-workshop-highlighter--not-downloaded');
         } else {
-            modLink.classList.add('steam-workshop-highlighter--not-downloaded');
-            modLink.classList.remove('steam-workshop-highlighter--downloaded');
+            // modLink.classList.add('steam-workshop-highlighter--not-downloaded');
         }
     }
 

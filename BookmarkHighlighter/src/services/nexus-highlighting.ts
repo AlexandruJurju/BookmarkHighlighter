@@ -66,10 +66,8 @@ export class NexusHighlighting implements IHighlighting {
 
         if (this.modUrls.includes(href)) {
             modLink.classList.add('nexus-highlighter--downloaded');
-            modLink.classList.remove('nexus-highlighter--not-downloaded');
         } else {
-            modLink.classList.add('nexus-highlighter--not-downloaded');
-            modLink.classList.remove('nexus-highlighter--downloaded');
+            // modLink.classList.add('nexus-highlighter--not-downloaded');
         }
     }
 
