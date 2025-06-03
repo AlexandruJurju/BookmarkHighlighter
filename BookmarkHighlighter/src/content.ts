@@ -1,7 +1,7 @@
-import {GameHighlighting} from "./services/game-highlighting";
-import {HighlightingService} from "./services/highlighting.service";
-import {NexusHighlighting} from "./services/nexus-highlighting";
-import {SteamWorkshopHighlighting} from "./services/steam-workshop-highlighting";
+import {GameHighlighting} from "./services/highlighting/game-highlighting";
+import {HighlightingService} from "./services/highlighting/highlighting.service";
+import {NexusHighlighting} from "./services/highlighting/nexus-highlighting";
+import {SteamWorkshopHighlighting} from "./services/highlighting/steam-workshop-highlighting";
 
 const highlightingService = HighlightingService.getInstance();
 const games = new GameHighlighting();

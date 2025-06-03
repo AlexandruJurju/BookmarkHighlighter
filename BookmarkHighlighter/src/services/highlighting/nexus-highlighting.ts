@@ -1,5 +1,5 @@
-﻿import {IHighlighting} from "../interfaces/IHighlighting";
-import {BookmarkManager} from "./bookmark-manager";
+﻿import {IHighlighting} from "../../interfaces/IHighlighting";
+import {BookmarkManager} from "../bookmark-manager";
 
 export class NexusHighlighting implements IHighlighting {
     private static readonly NEXUS_MODS_PATTERN = /https?:\/\/www\.nexusmods\.com\/([^/]+)\/mods\/(\d+)/;

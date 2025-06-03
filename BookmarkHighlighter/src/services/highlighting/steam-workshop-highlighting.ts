@@ -1,5 +1,5 @@
-﻿import {IHighlighting} from "../interfaces/IHighlighting";
-import {BookmarkManager} from "./bookmark-manager";
+﻿import {IHighlighting} from "../../interfaces/IHighlighting";
+import {BookmarkManager} from "../bookmark-manager";
 
 export class SteamWorkshopHighlighting implements IHighlighting {
     private static readonly STEAM_WORKSHOP_PATTERN = /https?:\/\/steamcommunity\.com\/sharedfiles\/filedetails\/\?id=\d+/;

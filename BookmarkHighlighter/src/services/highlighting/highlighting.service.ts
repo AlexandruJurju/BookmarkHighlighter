@@ -1,4 +1,4 @@
-import {IHighlighting} from "../interfaces/IHighlighting";
+import {IHighlighting} from "../../interfaces/IHighlighting";
 
 export class HighlightingService {
     private static instance: HighlightingService = new HighlightingService();

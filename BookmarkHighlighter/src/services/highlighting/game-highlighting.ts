@@ -1,6 +1,6 @@
-﻿import {IHighlighting} from "../interfaces/IHighlighting";
-import {BookmarkNode, ElementSelector, GameCategories} from "../interfaces/types";
-import {BookmarkManager} from "./bookmark-manager";
+﻿import {IHighlighting} from "../../interfaces/IHighlighting";
+import {BookmarkNode, ElementSelector, GameCategories} from "../../interfaces/types";
+import {BookmarkManager} from "../bookmark-manager";
 
 export class GameHighlighting implements IHighlighting {
     private gameCategories: GameCategories | null = null;
@@ -19,7 +19,7 @@ export class GameHighlighting implements IHighlighting {
     injectStyles(): void {
         const styles = `
             .steam-highlighter {
-                font-size: 20px;
+                font-size: 16px;
                 color: white;
             }
             .steam-highlighter--normal {

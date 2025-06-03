@@ -1,4 +1,4 @@
-import { BookmarkNode } from "../interfaces/types";
+import {BookmarkNode} from "../interfaces/types";
 
 export class BookmarkManager {
     static async getBookmarkTree(): Promise<BookmarkNode[]> {
@@ -10,11 +10,17 @@ export class BookmarkManager {
     }
 
     static findFolder(root: BookmarkNode, folderName: string): BookmarkNode | null {
-        if (root.title === folderName) return root;
+        if (root.title === folderName) {
+            return root
+        }
+
+
         if (root.children) {
             for (const child of root.children) {
                 const found = BookmarkManager.findFolder(child, folderName);
-                if (found) return found;
+                if (found) {
+                    return found
+                }
             }
         }
         return null;
