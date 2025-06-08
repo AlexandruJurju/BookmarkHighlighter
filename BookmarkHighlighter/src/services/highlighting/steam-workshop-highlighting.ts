@@ -1,40 +1,28 @@
-﻿import {IHighlighting} from "../../interfaces/IHighlighting";
-import {BookmarkManager} from "../bookmark-manager";
+﻿import {BaseHighlightingStrategy} from "./base-highlighting";
+import {IBookmarkManager} from "../../interfaces/IBookmarkManager";
 
-export class SteamWorkshopHighlighting implements IHighlighting {
-    private static readonly STEAM_WORKSHOP_PATTERN = /https?:\/\/steamcommunity\.com\/sharedfiles\/filedetails\/\?id=\d+/;
+export class SteamWorkshopHighlighting extends BaseHighlightingStrategy {
+    private static readonly STEAM_WORKSHOP_PATTERN =
+        /https?:\/\/steamcommunity\.com\/(?:sharedfiles\/|workshop\/)/;
     private modUrls: string[] = [];
+    private readonly highlightIntervalMs = 2000;
+
+    constructor(bookmarkManager: IBookmarkManager) {
+        super(bookmarkManager);
+    }
+
+    matchesCurrentUrl(): boolean {
+        return SteamWorkshopHighlighting.STEAM_WORKSHOP_PATTERN.test(window.location.href);
+    }
 
     async initialize(): Promise<void> {
-        console.log("INITIALIZED");
         this.modUrls = await this.getSteamWorkshopMods();
-        this.applyHighlighting();
-        this.startPeriodicHighlighting();
-    }
-
-    private async getSteamWorkshopMods(): Promise<string[]> {
-        const bookmarkTree = await BookmarkManager.getBookmarkTree();
-        const steamWorkshopFolder = BookmarkManager.findFolder(bookmarkTree[0], "Steam Workshop Mods");
-
-        if (!steamWorkshopFolder) {
-            return [];
-        }
-
-        return BookmarkManager.extractModUrls(steamWorkshopFolder)
-            .filter(url => this.isValidSteamWorkshopLink(url));
-    }
-
-    applyHighlighting(): void {
-        const modLinks = document.querySelectorAll<HTMLAnchorElement>('a.item_link[href*="steamcommunity.com/sharedfiles/filedetails/?id="]');
-
-        modLinks.forEach(modLink => {
-            if (!modLink.href) return;
-
-            this.applyStylesToModLink(modLink);
-        });
+        this.startPeriodicHighlighting(this.highlightIntervalMs);
     }
 
     injectStyles(): void {
+        if (this.stylesInjected) return;
+
         const styles = `
             .steam-workshop-highlighter {
                 // padding: 5px;
@@ -42,30 +30,60 @@ export class SteamWorkshopHighlighting implements IHighlighting {
             .steam-workshop-highlighter--downloaded {
                 border: 5px solid #008000;
             }
-            .steam-workshop-highlighter--not-downloaded {
-                border: 5px solid #a71930;
-            }
         `;
 
+        this.injectStyleSheet(styles);
+        this.stylesInjected = true;
+    }
+
+    protected injectStyleSheet(css: string): void {
         const styleSheet = document.createElement("style");
-        styleSheet.textContent = styles;
+        styleSheet.textContent = css;
         document.head.appendChild(styleSheet);
     }
 
-    private applyStylesToModLink(modLink: HTMLAnchorElement): void {
-        const href = modLink.href;
-
-        modLink.classList.add('steam-workshop-highlighter');
-
-        if (this.modUrls.includes(href)) {
-            modLink.classList.add('steam-workshop-highlighter--downloaded');
-        } else {
-            // modLink.classList.add('steam-workshop-highlighter--not-downloaded');
-        }
+    applyHighlighting(): void {
+        const modLinks = this.getModLinks();
+        modLinks.forEach(modLink => this.applyStylesToModLink(modLink));
     }
 
-    private startPeriodicHighlighting(): void {
-        setInterval(() => this.applyHighlighting(), 1000);
+    private async getSteamWorkshopMods(): Promise<string[]> {
+        const bookmarkTree = await this.bookmarkManager.getBookmarkTree();
+        const workshopFolder = this.bookmarkManager.findFolder(bookmarkTree[0], "Steam Workshop Mods");
+
+        if (!workshopFolder) return [];
+
+        return this.bookmarkManager.extractUrlsFromFolder(workshopFolder)
+            .filter(url => this.isValidSteamWorkshopLink(url));
+    }
+
+    private getModLinks(): HTMLAnchorElement[] {
+        return Array.from(
+            document.querySelectorAll<HTMLAnchorElement>(
+                'a.item_link[href*="filedetails/?id="], a.workshopItemTitle'
+            )
+        ).filter(link => this.isValidSteamWorkshopLink(link.href));
+    }
+
+    private applyStylesToModLink(modLink: HTMLAnchorElement): void {
+        if (!modLink.href) return;
+
+        // Find the parent workshop item container
+        const workshopItem = modLink.closest('.workshopItem') ||
+            modLink.closest('.workshopItemListItem') ||
+            modLink.parentElement;
+
+        if (workshopItem) {
+            workshopItem.classList.add('steam-workshop-highlighter');
+
+            if (this.modUrls.includes(modLink.href)) {
+                workshopItem.classList.add('steam-workshop-highlighter--downloaded');
+                workshopItem.classList.remove('steam-workshop-highlighter--not-downloaded');
+            } else {
+                workshopItem.classList.add('steam-workshop-highlighter--not-downloaded');
+                workshopItem.classList.remove('steam-workshop-highlighter--downloaded');
+            }
+        }
     }
 
     private isValidSteamWorkshopLink(url: string): boolean {

@@ -1,43 +1,73 @@
-import {BookmarkNode} from "../interfaces/types";
+import {IBookmarkManager} from "../interfaces/IBookmarkManager";
+import {BookmarkNode} from "../interfaces/BookmarkNode";
 
-export class BookmarkManager {
-    static async getBookmarkTree(): Promise<BookmarkNode[]> {
-        return new Promise((resolve) => {
-            chrome.runtime.sendMessage({action: "getBookmarks"}, (bookmarkTree) => {
-                resolve(bookmarkTree);
-            });
+export class ChromeBookmarkManager implements IBookmarkManager {
+    private static instance: ChromeBookmarkManager;
+
+    private constructor() {}
+
+    public static getInstance(): ChromeBookmarkManager {
+        if (!ChromeBookmarkManager.instance) {
+            ChromeBookmarkManager.instance = new ChromeBookmarkManager();
+        }
+        return ChromeBookmarkManager.instance;
+    }
+
+    async getBookmarkTree(): Promise<BookmarkNode[]> {
+        return new Promise((resolve, reject) => {
+            try {
+                chrome.runtime.sendMessage(
+                    { action: "getBookmarks" },
+                    (bookmarkTree: BookmarkNode[]) => {
+                        if (chrome.runtime.lastError) {
+                            reject(new Error(chrome.runtime.lastError.message));
+                            return;
+                        }
+                        resolve(bookmarkTree || []);
+                    }
+                );
+            } catch (error) {
+                reject(new Error("Failed to retrieve bookmarks"));
+            }
         });
     }
 
-    static findFolder(root: BookmarkNode, folderName: string): BookmarkNode | null {
+    findFolder(root: BookmarkNode, folderName: string): BookmarkNode | null {
+        if (!root || !folderName) return null;
+
         if (root.title === folderName) {
-            return root
+            return root;
         }
 
-
-        if (root.children) {
+        if (root.children?.length) {
             for (const child of root.children) {
-                const found = BookmarkManager.findFolder(child, folderName);
+                const found = this.findFolder(child, folderName);
                 if (found) {
-                    return found
+                    return found;
                 }
             }
         }
+
         return null;
     }
 
-    static extractModUrls(folder: BookmarkNode): string[] {
+    extractUrlsFromFolder(folder: BookmarkNode): string[] {
         const urls: string[] = [];
 
-        const processNode = (node: BookmarkNode) => {
-            if (node.children) {
-                node.children.forEach(processNode);
+        if (!folder) return urls;
+
+        const stack: BookmarkNode[] = [folder];
+
+        while (stack.length > 0) {
+            const node = stack.pop()!;
+
+            if (node.children?.length) {
+                stack.push(...node.children);
             } else if (node.url) {
                 urls.push(node.url);
             }
-        };
+        }
 
-        processNode(folder);
         return urls;
     }
 }

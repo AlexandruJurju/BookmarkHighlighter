@@ -1,19 +1,30 @@
-import {IHighlighting} from "../../interfaces/IHighlighting";
+import {IHighlightingStrategy} from "../../interfaces/IHighlightingStrategy";
 
 export class HighlightingService {
-    private static instance: HighlightingService = new HighlightingService();
-    private strategy: IHighlighting | null = null;
+    private static instance: HighlightingService;
+    private strategies: IHighlightingStrategy[] = [];
 
-    private constructor() {
+    private constructor() {}
+
+    public static getInstance(): HighlightingService {
+        if (!HighlightingService.instance) {
+            HighlightingService.instance = new HighlightingService();
+        }
+        return HighlightingService.instance;
     }
 
-    static getInstance(): HighlightingService {
-        return this.instance;
+    public register(strategy: IHighlightingStrategy): void {
+        this.strategies.push(strategy);
     }
 
-    useHighlighter(strategy: IHighlighting): void {
-        this.strategy = strategy;
-        strategy.injectStyles();
-        strategy.initialize();
+    public async initializeStrategies(): Promise<void> {
+        const applicableStrategies = this.strategies.filter(strategy =>
+            strategy.matchesCurrentUrl()
+        );
+
+        for (const strategy of applicableStrategies) {
+            strategy.injectStyles();
+            await strategy.initialize();
+        }
     }
 }

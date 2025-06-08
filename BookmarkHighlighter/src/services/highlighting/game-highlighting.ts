@@ -1,59 +1,85 @@
-﻿import {IHighlighting} from "../../interfaces/IHighlighting";
-import {BookmarkNode, ElementSelector, GameCategories} from "../../interfaces/types";
-import {BookmarkManager} from "../bookmark-manager";
+﻿import {BaseHighlightingStrategy} from "./base-highlighting";
+import {IBookmarkManager} from "../../interfaces/IBookmarkManager";
+import {BookmarkNode} from "../../interfaces/BookmarkNode";
 
-export class GameHighlighting implements IHighlighting {
+interface GameCategories {
+    early: string[];
+    waiting: string[];
+    normal: string[];
+}
+
+
+interface GameSelector {
+    matches: (url: string) => boolean;
+    getElements: () => HTMLElement[];
+}
+
+export class GameHighlighting extends BaseHighlightingStrategy {
     private gameCategories: GameCategories | null = null;
-    private readonly selectors: ElementSelector[];
+    private readonly selectors: GameSelector[];
 
-    constructor() {
+    constructor(bookmarkManager: IBookmarkManager) {
+        super(bookmarkManager);
         this.selectors = this.initializeSelectors();
+    }
+
+    matchesCurrentUrl(): boolean {
+        return this.selectors.some(selector =>
+            selector.matches(window.location.href)
+        );
     }
 
     async initialize(): Promise<void> {
         this.gameCategories = await this.getGameCategories();
-        this.applyHighlighting();
         this.startPeriodicHighlighting();
     }
 
     injectStyles(): void {
+        if (this.stylesInjected) return;
+
         const styles = `
             .steam-highlighter {
                 font-size: 16px;
                 color: white;
+                padding: 2px 5px;
+                border-radius: 3px;
             }
-            .steam-highlighter--normal {
-                background-color: #008000;
-            }
-            .steam-highlighter--early {
-                background-color: #1034A6;
-            }
-            .steam-highlighter--waiting {
-                background-color: #666666;
-            }
+            .steam-highlighter--normal { background-color: #008000; }
+            .steam-highlighter--early { background-color: #1034A6; }
+            .steam-highlighter--waiting { background-color: #666666; }
+            .steam-highlighter--not-played { background-color: transparent; }
         `;
 
-        const styleSheet = document.createElement("style");
-        styleSheet.textContent = styles;
-        document.head.appendChild(styleSheet);
+        this.injectStyleSheet(styles);
+        this.stylesInjected = true;
+    }
+
+    applyHighlighting(): void {
+        if (!this.gameCategories) return;
+
+        const currentUrl = window.location.href;
+        const matchingSelector = this.selectors.find(selector =>
+            selector.matches(currentUrl)
+        );
+
+        if (matchingSelector) {
+            const elements = matchingSelector.getElements();
+            this.applyClassesToElements(elements);
+        }
     }
 
     private async getGameCategories(): Promise<GameCategories> {
-        const bookmarkTree = await BookmarkManager.getBookmarkTree();
-        const gamesFolder = BookmarkManager.findFolder(bookmarkTree[0], "Games");
+        const bookmarkTree = await this.bookmarkManager.getBookmarkTree();
+        const gamesFolder = this.bookmarkManager.findFolder(bookmarkTree[0], "Games");
 
-        if (!gamesFolder) {
-            return {early: [], waiting: [], normal: []};
-        }
-
-        return this.categorizeGames(gamesFolder);
+        return gamesFolder ? this.categorizeGames(gamesFolder) : {
+            early: [], waiting: [], normal: []
+        };
     }
 
     private categorizeGames(gamesFolder: BookmarkNode): GameCategories {
         const categories: GameCategories = {
-            early: [],
-            waiting: [],
-            normal: []
+            early: [], waiting: [], normal: []
         };
 
         this.processGamesFolder(gamesFolder, categories);
@@ -85,82 +111,52 @@ export class GameHighlighting implements IHighlighting {
         }
     }
 
-    private initializeSelectors(): ElementSelector[] {
+    private initializeSelectors(): GameSelector[] {
         return [
             {
-                matches: (url: string) => url.includes('store.steampowered.com/search/'),
-                getElements: () => Array.from(document.getElementsByClassName('title')).map(el => el as HTMLElement)
+                matches: (url) => url.includes('store.steampowered.com/search/'),
+                getElements: () => Array.from(document.getElementsByClassName('title'))
+                    .map(el => el as HTMLElement)
             },
             {
-                matches: (url: string) => url.includes('steam250.com'),
-                getElements: () => Array.from(document.querySelectorAll('.title a')).map(el => el as HTMLElement)
+                matches: (url) => url.includes('steam250.com'),
+                getElements: () => Array.from(document.querySelectorAll('.title a'))
+                    .map(el => el as HTMLElement)
             },
             {
-                matches: (url: string) => /steamdb\.info\/stats\/gameratings\/\d+/.test(url),
-                getElements: () => Array.from(document.getElementsByClassName('b')).map(el => el as HTMLElement)
+                matches: (url) => /steamdb\.info\/stats\/gameratings\/\d+/.test(url),
+                getElements: () => Array.from(document.getElementsByClassName('b'))
+                    .map(el => el as HTMLElement)
             },
             {
-                matches: (url: string) => url.includes('steamdb.info/stats/gameratings'),
+                matches: (url) => url.includes('steamdb.info/stats/gameratings'),
                 getElements: () => {
                     const elements = document.getElementsByTagName('td');
                     return Array.from(elements)
                         .filter((_, i) => i % 7 === 2)
-                        .map(td => {
-                            const link = td.querySelector('a');
-                            return link as HTMLElement;
-                        })
-                        .filter((link): link is HTMLElement => link !== null);
+                        .map(td => td.querySelector('a') as HTMLElement)
+                        .filter(link => link !== null);
                 }
             }
         ];
     }
 
-    private startPeriodicHighlighting(): void {
-        setInterval(() => this.applyHighlighting(), 5000);
-    }
-
-    applyHighlighting(): void {
-        if (!this.gameCategories) return;
-
-        const currentUrl = window.location.href;
-        const matchingSelector = this.selectors.find(selector => selector.matches(currentUrl));
-
-        if (matchingSelector) {
-            const elements = matchingSelector.getElements();
-            if (elements && elements.length > 0) {
-                this.applyClassesToElements(elements);
-            }
-        }
-    }
-
     private applyClassesToElements(elements: HTMLElement[]): void {
-        for (const element of elements) {
+        elements.forEach(element => {
             if (element instanceof HTMLElement) {
                 const textContent = this.normalizeGameTitle(element.textContent || '');
                 this.applyClassesToElement(element, textContent);
             }
-        }
+        });
     }
 
     private normalizeGameTitle(title: string): string {
-        return title
-            .replace('amp', '')
-            .replace(/(?!\w|\s)./g, '')
-            .replace(/™/g, '')
-            .trim()
-            .toLowerCase();
+        return this.normalizeText(title);
     }
 
     private applyClassesToElement(element: HTMLElement, gameName: string): void {
         element.classList.add('steam-highlighter');
-
-        if (!this.gameCategories) {
-            element.classList.add('steam-highlighter--not-played');
-            return;
-        }
-
-        const categoryClass = this.getCategoryClassForGame(gameName);
-        element.classList.add(categoryClass);
+        element.classList.add(this.getCategoryClassForGame(gameName));
     }
 
     private getCategoryClassForGame(gameName: string): string {
@@ -180,6 +176,12 @@ export class GameHighlighting implements IHighlighting {
     }
 
     private normalizeGameName(gameName: string): string {
-        return gameName.replace(/_/g, ' ').toLowerCase().trim();
+        return this.normalizeText(gameName.replace(/_/g, ' '));
+    }
+
+    private injectStyleSheet(css: string): void {
+        const styleSheet = document.createElement("style");
+        styleSheet.textContent = css;
+        document.head.appendChild(styleSheet);
     }
 }
