@@ -118,25 +118,15 @@ export class GameHighlighting extends BaseHighlightingStrategy {
                 getElements: () => Array.from(document.getElementsByClassName('title'))
                     .map(el => el as HTMLElement)
             },
+            // {
+            //     matches: (url) => url.includes('steam250.com'),
+            //     getElements: () => Array.from(document.querySelectorAll('.title a'))
+            //         .map(el => el as HTMLElement)
+            // },
             {
-                matches: (url) => url.includes('steam250.com'),
-                getElements: () => Array.from(document.querySelectorAll('.title a'))
-                    .map(el => el as HTMLElement)
-            },
-            {
-                matches: (url) => /steamdb\.info\/stats\/gameratings\/\d+/.test(url),
+                matches: (url) => /steamdb\.info\/stats\/gameratings(\/|$)/i.test(url),
                 getElements: () => Array.from(document.getElementsByClassName('b'))
                     .map(el => el as HTMLElement)
-            },
-            {
-                matches: (url) => url.includes('steamdb.info/stats/gameratings'),
-                getElements: () => {
-                    const elements = document.getElementsByTagName('td');
-                    return Array.from(elements)
-                        .filter((_, i) => i % 7 === 2)
-                        .map(td => td.querySelector('a') as HTMLElement)
-                        .filter(link => link !== null);
-                }
             }
         ];
     }
