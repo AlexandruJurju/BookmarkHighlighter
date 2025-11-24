@@ -1,8 +1,6 @@
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+﻿chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     if (request.action === "getBookmarks") {
-        chrome.bookmarks.getTree((bookmarkTree) => {
-            sendResponse(bookmarkTree);
-        });
+        chrome.bookmarks.getTree(sendResponse);
         return true;
     }
 });

@@ -1,0 +1,24 @@
+﻿{
+    "extends": [
+        "eslint:recommended",
+        "plugin:@typescript-eslint/recommended"
+    ],
+    "parser": "@typescript-eslint/parser",
+    "plugins": [
+        "@typescript-eslint"
+    ],
+    "rules": {
+        "curly": [
+            "error",
+            "all"
+        ],
+        "brace-style": [
+            "error",
+            "1tbs"
+        ],
+        "nonblock-statement-body-position": [
+            "error",
+            "below"
+        ]
+    }
+}
